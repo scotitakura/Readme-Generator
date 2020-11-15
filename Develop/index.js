@@ -1,127 +1,71 @@
-// // array of questions for user
-// const questions = [
-
-// ];
-
-// // function to write README file
-// function writeToFile(fileName, data) {
-// }
-
-// // function to initialize program
-// function init() {
-
-// }
-
-// function call to initialize program
-// init();
-
 const fs = require('fs');
-const generatePage = require('./utils/page-template.js');
+const generatePage = require('./utils/generateMarkdown.js');
 const inquirer = require('inquirer');
 
 const promptUser = () => {
   return inquirer.prompt([
     {
-      type: 'input',
-      name: 'name',
-      message: 'What is your name? (Required)',
-      validate: nameInput => {
-        if (nameInput) {
-          return true;
-        } else {
-          console.log('Please enter your name!');
-          return false;
-        }
-      }
+      type: "input",
+      name: "title",
+      message: "What is the title of your markdown file? (Required)"
     },
     {
-      type: 'input',
-      name: 'github',
-      message: 'Enter your GitHub Username'
+      type: "input",
+      name: "description",
+      message: "Enter a description.",
     },
     {
-      type: 'confirm',
-      name: 'confirmAbout',
-      message: 'Would you like to enter some information about yourself for an "About" section?',
-      default: true
+      type: "input",
+      name: "installation",
+      message: "Enter how to start this app (installation).",
     },
     {
-      type: 'confirm',
-      name: 'confirmAbout',
-      message: 'Would you like to enter some information about yourself for an "About" section?',
-      default: true
+      type: "input",
+      name: "usage",
+      message: "Enter how to use this app.",
     },
     {
-      type: 'input',
-      name: 'about',
-      message: 'Provide some information about yourself:',
-      when: ({ confirmAbout }) => confirmAbout
-    },
-  ]);
-};
-
-const promptProject = portfolioData => {
-  portfolioData.projects = [];
-  if (!portfolioData.projects) {
-    portfolioData.projects = [];
-  }
-  console.log(`
-=================
-Add a New Project
-=================
-`);
-  return inquirer.prompt([
-    {
-      type: 'input',
-      name: 'name',
-      message: 'What is the name of your project?'
+      type: "input",
+      name: "credits",
+      message: "Enter credits.",
     },
     {
-      type: 'input',
-      name: 'description',
-      message: 'Provide a description of the project (Required)'
+      type: "input",
+      name: "license",
+      message: "Enter the licenses.",
     },
     {
-      type: 'checkbox',
-      name: 'languages',
-      message: 'What did you this project with? (Check all that apply)',
-      choices: ['JavaScript', 'HTML', 'CSS', 'ES6', 'jQuery', 'Bootstrap', 'Node']
+      type: "input",
+      name: "badges",
+      message: "Enter badges.",
     },
     {
-      type: 'input',
-      name: 'link',
-      message: 'Enter the GitHub link to your project. (Required)'
+      type: "input",
+      name: "contributing",
+      message: "Enter contributions.",
     },
     {
-      type: 'confirm',
-      name: 'feature',
-      message: 'Would you like to feature this project?',
-      default: false
+      type: "input",
+      name: "tests",
+      message: "Enter tests.",
     },
     {
-      type: 'confirm',
-      name: 'confirmAddProject',
-      message: 'Would you like to enter another project?',
-      default: false
-    }
+      type: "input",
+      name: "profile",
+      message: "Enter your Github profile.",
+    },
   ]).then(projectData => {
-    portfolioData.projects.push(projectData);
-    if (projectData.confirmAddProject) {
-      return promptProject(portfolioData);
-    } else {
-      return portfolioData;
-    }
+    return projectData;
   });
 };
 
 promptUser()
-  .then(promptProject)
-  .then(portfolioData => {
-    const pageHTML = generatePage(portfolioData);
+  .then(markdownData => {
+    const pageHTML = generatePage(markdownData);
 
-    fs.writeFile('./index.html', pageHTML, err => {
+    fs.writeFile(`./${markdownData.title}.md`, pageHTML, err => {
       if (err) throw new Error(err);
 
-      console.log('Page created! Check out index.html in this directory to see it!');
+      console.log(`Page created! Check out ${markdownData.title}.md in this directory to see it!`);
     });
   });
